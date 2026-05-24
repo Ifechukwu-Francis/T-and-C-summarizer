@@ -1,7 +1,9 @@
 //scrap the T&C's from the page and send it to the background script
 chrome.runtime.onMessage.addListener( (message, sender, sendResponse) =>{
   if (message.type === "SCRAPE_TEXT") {
+
     const pageText = document.body.innerText;
+    
     if (pageText && pageText.length > 100) {
         sendResponse({ type: "SCRAPE_RESULT", text: pageText, error: null });
     } else {
