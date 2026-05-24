@@ -5,24 +5,51 @@
 //2. Tell content.js to scrape the page text
 //3. Send that text to Claude API and return the 3 bullets
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "ANALYZE_PAGE") {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const tabId = tabs[0].id;
-            //this code is simply asking the browser: 
-            // "Hey, which tab is currently active? Browser replies: "Tab 2, and its ID is 451."
-            //tabId = 451
-            chrome.tabs.sendMessage(tabId, {type: "SCRAPE_TEXT"}, (scrapeResponse) => {
-                if (scrapeResponse.error) {
-                    sendResponse({ type: "ANALYZE_RESULT", bullets: null, error: scrapeResponse.error });
-                    return;
-                }
-                const pageText = scrapeResponse.text;
-                // Process the scraped text and send it to Claude API
-            });
+chrome.runtime.onMessage.addListener( async (message, sender, sendResponse) => {
+  if (message.type === "ANALYZE_PAGE") {
+    //1. Tell content.js to scrape the page text    
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tabId = tabs[0].id;
+
+      chrome.tabs.active.sendMessage(tabId, { type: "SCRAPE_TEXT" }, async (scrapeResponse) => {
+
+        if (scrapeResponse.error) {
+            sendResponse({ type: "ANALYZE_RESULT", bullets: null, error: scrapeResponse.error });
+        return;
+
+        }
+        const pageText = scrapeResponse.text;
+
+        try{
+            const response = await fetch("https://generativeLanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=YOUR_API_KEY",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: `Summarize the following Terms and Conditions into 3 concise bullet points:\n\n${pageText}`
+                            }
+                        ]
+                    }
+                ]
+        })
+
         });
-    }
+        const data = await response.json();
+        const rawText = data.candidates[0].content.parts[0].text;
+        const bullets = rawText.split("\n").filter(line => line.trim() !== ""); //split by new line and remove empty lines
 
-    return true; 
+        sendResponse({ type: "ANALYZE_RESULT", bullets, error: null });
+        } catch(error){
+            sendResponse({ type: "ANALYZE_RESULT", bullets: null, error: error.message || "An error occurred while summarizing." });
+        }
+    });
 
+  });
+}
+    return true;//keep the message channel open for async Response
 });
