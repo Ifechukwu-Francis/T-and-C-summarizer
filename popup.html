@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T&C Summarizer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <img src="icons/icon48.png" alt="Logo" class="logo" id="logo">
+      <h1>T&C Summarizer</h1>
+      <button class="settings-btn" id="settingsBtn">⚙️</button>
+    </div>
+
+    <!-- Status Message -->
+    <div class="status" id="status">
+      <span id="statusText">Ready to summarize</span>
+      <div class="loader hidden" id="loader"></div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="summary-container hidden" id="summaryContainer">
+      <div class="summary-title">
+        <span>📄 Key Points</span>
+        <button class="copy-btn" id="copyBtn" title="Copy summary">📋 Copy</button>
+      </div>
+      <div class="summary-content" id="summaryContent">
+        <!-- 3 bullet points will be injected here -->
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="actions">
+      <button class="btn btn-primary" id="summarizeBtn">
+        🔍 Summarize This Page
+      </button>
+      <button class="btn btn-secondary hidden" id="resetBtn">
+        🔄 Summarize Another Page
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <span id="pageStatus"></span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "T&C Summarizer",
+  "version": "1.0.0",
+  "description": "Summarizes Terms & Conditions into 3 easy-to-read bullet points",
+  "author": "Igbokwe Ifechukwu, Ikeh-Ezeji Chinaza",
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Summarize T&C",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  
+  
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  
+  "host_permissions": [
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*terms*",
+        "*://*/*conditions*",
+        "*://*/*tandc*",
+        "*://*/*t&c*",
+        "*://*/*agb*",
+        "*://*/*tos*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
